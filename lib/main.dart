@@ -27,15 +27,43 @@ class _HomeState extends State<Home> {
   double _euro;
 
   void _realChanged(String text) {
+    if (text.isEmpty) {
+      _clearAll();
+      return;
+    }
+
+    double real = double.parse(text);
+    if (text.isEmpty) {
+      _clearAll();
+      return;
+    }
+
+    dolarController.text = (real / _dolar).toStringAsFixed(2);
+    euroController.text = (real / _euro).toStringAsFixed(2);
     print(text);
   }
 
   void _dolarChanged(String text) {
-    print(text);
+    if (text.isEmpty) {
+      _clearAll();
+      return;
+    }
+
+    double dolar = double.parse(text);
+    realController.text = (dolar * this._dolar).toStringAsFixed(2);
+    euroController.text = (dolar * this._dolar / _euro).toStringAsFixed(2);
   }
 
   void _euroChanged(String text) {
-    print(text);
+    double euro = double.parse(text);
+    realController.text = (euro * this._euro).toStringAsFixed(2);
+    dolarController.text = (euro * this._euro / _dolar).toStringAsFixed(2);
+  }
+
+  void _clearAll() {
+    realController.text = "";
+    dolarController.text = "";
+    euroController.text = "";
   }
 
   Future<Map> getData() async {
@@ -82,11 +110,14 @@ class _HomeState extends State<Home> {
                           size: 150,
                           color: Colors.amber,
                         ),
-                        buildTexField("Reais", "R\$", realController, _realChanged),
+                        buildTexField(
+                            "Reais", "R\$", realController, _realChanged),
                         Divider(),
-                        buildTexField("Dólares", "U\$", dolarController, _dolarChanged),
+                        buildTexField(
+                            "Dólares", "U\$", dolarController, _dolarChanged),
                         Divider(),
-                        buildTexField("Euros", "€", euroController, _euroChanged)
+                        buildTexField(
+                            "Euros", "€", euroController, _euroChanged)
                       ],
                     ),
                     padding: EdgeInsets.all(10.0));
@@ -98,8 +129,8 @@ class _HomeState extends State<Home> {
   }
 }
 
-Widget buildTexField(
-    String label, String prefix, TextEditingController controller, Function handleChange) {
+Widget buildTexField(String label, String prefix,
+    TextEditingController controller, Function handleChange) {
   return (TextField(
     controller: controller,
     onChanged: handleChange,
